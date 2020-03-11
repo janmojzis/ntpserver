@@ -12,5 +12,5 @@ before_script:
   - sudo apt-get -y install ntpdate python3
 
 script:
-  - sudo ./test.sh
+  - sudo ./.travistest.sh
 

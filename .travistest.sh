@@ -5,9 +5,6 @@
 
 set -e
 
-# change directory to $AUTOPKGTEST_TMP
-cd "${AUTOPKGTEST_TMP}"
-
 ./ntpserver.py -v 127.0.0.1 123 &
 ntpserverpid=$!
 

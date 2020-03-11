@@ -47,7 +47,7 @@ def usage():
         print("ntpserver.py [-vh] [ip] [port] [chroot directory]", file = sys.stderr)
         sys.exit(100)
 
-flagverbose = 1
+loglevel = logging.INFO
 
 # parse program parameters
 try:
@@ -61,7 +61,7 @@ for opt, val in options:
         if opt == "-h":
                 usage()
         if opt == "-v":
-                flagverbose += 1
+                loglevel = logging.DEBUG
 
 try:
         localip = arguments[0]
@@ -78,10 +78,10 @@ try:
 except IndexError:
         root = '/var/lib/ntpserver'
 
-if flagverbose > 1:
-        logging.basicConfig(level = logging.DEBUG)
-else:
-        logging.basicConfig(level = logging.INFO)
+logging.basicConfig(
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        level = loglevel,
+        datefmt='%Y-%m-%d_%H:%M:%S')
 
 logging.info("starting ntpserver.py %s %d" % (localip, localport))
 

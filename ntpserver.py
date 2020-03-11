@@ -11,6 +11,7 @@ import os
 import random
 import sys
 import struct
+import getopt
 
 NTPFORMAT = ">3B b 3I 4Q"
 NTPDELTA = 2208988800.0
@@ -38,24 +39,56 @@ def tfmt(t = 0.0):
 
         return datetime.datetime.fromtimestamp(t).strftime("%Y-%m-%d_%H:%M:%S.%f")
 
+def usage():
+        """
+        Print the usage
+        """
+
+        print("ntpserver.py [-vh] [ip] [port] [chroot directory]", file = sys.stderr)
+        sys.exit(100)
+
+flagverbose = 1
+
+# parse program parameters
 try:
-    localip = sys.argv[1]
-except IndexError:
-    localip = "0.0.0.0"
+        options, arguments = getopt.getopt(sys.argv[1:], 'hv')
+except Exception as e:
+        #bad option
+        usage()
+
+# process options
+for opt, val in options:
+        if opt == "-h":
+                usage()
+        if opt == "-v":
+                flagverbose += 1
 
 try:
-    localport = int(sys.argv[2])
+        localip = arguments[0]
 except IndexError:
-    localport = 123
+        localip = "0.0.0.0"
 
-logging.basicConfig(level = logging.INFO)
+try:
+        localport = int(arguments[1])
+except IndexError:
+        localport = 123
+
+try:
+        root = arguments[2]
+except IndexError:
+        root = '/var/lib/ntpserver'
+
+if flagverbose > 1:
+        logging.basicConfig(level = logging.DEBUG)
+else:
+        logging.basicConfig(level = logging.INFO)
+
 logging.info("starting ntpserver.py %s %d" % (localip, localport))
 
 # chroot
-root = os.getenv("ROOT")
-if not root:
-        logging.warning('$ROOT not set, using current directory')
-        root = "."
+if not os.path.exists(root):
+        logging.warning('%s not exist, making the directory' % (root))
+        os.mkdir(root)
 os.chdir(root)
 root = os.getcwd()
 os.chroot(".")

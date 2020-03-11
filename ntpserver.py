@@ -100,9 +100,14 @@ s.bind((localip, localport))
 logging.debug('local socket: %s:%d' % s.getsockname())
 
 # drop privileges
-uid = 100000000 + 100000 * random.randint(0, 999) + os.getpid()
-os.setgid(uid)
-os.setuid(uid)
+try:
+        uid = 100000000 + 100000 * random.randint(0, 999) + os.getpid()
+        os.setgid(uid)
+        os.setuid(uid)
+except OSError:
+        uid = 10000 + random.randint(0, 9999)
+        os.setgid(uid)
+        os.setuid(uid)
 logging.debug('UID/GID set to %d' % (uid))
 
 # get the precision

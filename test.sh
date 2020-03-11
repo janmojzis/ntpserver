@@ -3,6 +3,8 @@
 # Jan Mojzis
 # Public domain.
 
+set -e
+
 # change directory to $AUTOPKGTEST_TMP
 cd "${AUTOPKGTEST_TMP}"
 
@@ -20,6 +22,5 @@ trap "cleanup" EXIT TERM INT
 
 sleep 5
 
-ntpdate -vdq 127.0.0.1 || exit 111
-
+ntpdate -vdq 127.0.0.1
 exit 0
